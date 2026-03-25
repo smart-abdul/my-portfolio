@@ -17,7 +17,24 @@ mongoose.connect(mongoURI)
 app.get('/', (req, res) => {
     res.send('Backend is running!');
 });
+// 1. Define the Project Model (How data looks in MongoDB)
+const projectSchema = new mongoose.Schema({
+    title: String,
+    description: String,
+    techStack: [String]
+});
 
+const Project = mongoose.model('Project', projectSchema);
+
+// 2. The Route to "GET" your projects
+app.get('/api/projects', async (req, res) => {
+    try {
+        const projects = await Project.find();
+        res.json(projects); // This sends your data to the browser/Vercel
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
